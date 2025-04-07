@@ -1,24 +1,21 @@
-from fastapi import FastAPI
-from enum import Enum
+from fastapi import FastAPI #import the FastAPI class to create the main object
 
-class Movies(str, Enum):
-   action= "action"
-   comedy = "comedy"
-   drama = "drama"
-   horror= "horror"
+books = [
+    {"title": "The Alchemist", "author": "Paulo Coelho", "genre": "Fiction"},
+    {"title": "Atomic Habits", "author": "James Clear", "genre": "Self-Help"},
+    {"title": "1984", "author": "George Orwell", "genre": "Dystopian"},
+]
 
-rating = {
-   "action": "PG-13",
-    "comedy": "PG",
-    "drama": "R",
-    "horror": "NC-17",
-}
+app = FastAPI() #An instance of the FastAPI class(main object)
 
-app = FastAPI()
-
-@app.get('/rating/{movies}')
-async def get_rating(movies : Movies):
-   return {
-      'movies': movies.name,
-      'rating': rating[movies.name]
-   }
+@app.get('/books') #A decorator to extend the get method from the FastAPI class and a an endpoint
+async def get_books(author : str = None, genre : str = None):
+    results = books
+    if author!=None or genre!=None:
+        if author:
+            results = [item  for item in results if item['author'].lower()==author.lower()]
+        if genre:
+            results = [item for item in results if item['genre'].lower()==genre.lower()]
+        return results
+    else :
+        return results
