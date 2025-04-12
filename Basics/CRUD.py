@@ -34,8 +34,6 @@ async def update(items : Items):
         return f'Product ID {items.product_id} is not found'
     
     
-    
-
 #Delete an product from the dictionary
 @app.delete('/delete')
 async def delete(items: Items):
