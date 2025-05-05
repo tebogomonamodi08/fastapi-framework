@@ -1,0 +1,33 @@
+'''
+Challenge 2: Header-Based Token Auth
+Create a dependency that extracts a token from the request headers. If the token isn’t 
+"secrettoken123", raise an unauthorized error. Use this in a secure GET route that returns some 
+data only if the token is valid.
+'''
+
+from fastapi import FastAPI, Depends, Header
+
+app = FastAPI()
+
+async def get_token(authorization : str = Header(...)) -> tuple[bool,str]:
+    if authorization != 'secrettoken123':
+        granted = False
+        message = 'Unauthorized to access this URL'
+        return (granted,message)
+    else:
+        granted = True
+        return (granted, None)
+    
+@app.get('/')
+async def access_secrete_message(p : tuple[bool,str] = Depends(get_token)):
+    granted,message = p
+    if granted:
+        return {
+            'secret_message' : 'The  movie Magazine Dreams was so nice.'
+        }
+    else:
+        return {
+            message
+        }
+        
+
